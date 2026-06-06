@@ -20,16 +20,28 @@ public class Spawn {
     }
     public void teleport(Player player, int radius) {
         if (!player.isOnline()) return;
-        World world = player.getWorld();
+        World world = getTargetWorld(player);
 
         findSafeAsync(world, radius).thenAccept(loc -> {
             if (!player.isOnline()) return;
             Location target = (loc != null) ? loc : world.getSpawnLocation();
             debug("Teleporting " + player.getName()
+                    + " to " + world.getName()
                     + " -> " + target.getBlockX() + "," + target.getBlockY() + "," + target.getBlockZ());
             player.teleportAsync(target);
         });
     }
+
+    private World getTargetWorld(Player player) {
+        String name = plugin.cfg().getMainWorld();
+        World w = org.bukkit.Bukkit.getWorld(name);
+        if (w == null) {
+            debug("main_world '" + name + "' not found — using player's world.");
+            return player.getWorld();
+        }
+        return w;
+    }
+
     public CompletableFuture<Location> findSafeAsync(World world, int radius) {
         CompletableFuture<Location> future = new CompletableFuture<>();
         tryNextAttempt(world, radius, 0, future);

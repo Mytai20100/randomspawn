@@ -13,6 +13,7 @@ public class Config {
     private volatile boolean spawnOnEveryLogin;
     private volatile int     respawnTimeoutTicks; // stored as ticks internally
     private volatile boolean debug;
+    private volatile String  mainWorld;
 
     public Config(main plugin) {
         this.plugin = plugin;
@@ -29,6 +30,7 @@ public class Config {
         enabled           = plugin.getConfig().getBoolean("randomspawn.enabled", true);
         spawnOnEveryLogin = plugin.getConfig().getBoolean("randomspawn.spawn_on_every_login", false);
         debug             = plugin.getConfig().getBoolean("randomspawn.debug", false);
+        mainWorld         = plugin.getConfig().getString("randomspawn.main_world", "world");
 
         int rawSecs = plugin.getConfig().getInt("randomspawn.respawn_timeout", 30);
         int clampedSecs = Math.max(MIN_TIMEOUT_SECS, Math.min(rawSecs, MAX_TIMEOUT_SECS));
@@ -40,4 +42,5 @@ public class Config {
     public boolean spawnOnEveryLogin()      { return spawnOnEveryLogin; }
     public int     getRespawnTimeoutTicks() { return respawnTimeoutTicks; }
     public boolean isDebug()               { return debug; }
+    public String  getMainWorld()           { return mainWorld; }
 }

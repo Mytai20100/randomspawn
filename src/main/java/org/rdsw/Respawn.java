@@ -19,9 +19,11 @@ public class Respawn implements Listener {
         if (event.getEntity().getBedSpawnLocation() != null) return;
 
         Player player = event.getEntity();
-        World  world  = player.getWorld();
+        World  world  = getTargetWorld(player);
 
-        debug(player.getName() + " died — searching for random spawn...");
+        debug(player.getName() + " died in " + player.getWorld().getName()
+                + " — searching random spawn in: " + world.getName());
+
         plugin.getSpawn().findSafeAsync(world, plugin.cfg().getAround())
             .thenAccept(loc -> {
                 Location target = (loc != null) ? loc : world.getSpawnLocation();
@@ -30,6 +32,17 @@ public class Respawn implements Listener {
                 pollUntilAlive(player, target, 0);
             });
     }
+    private World getTargetWorld(Player player) {
+        String name = plugin.cfg().getMainWorld();
+        World w = org.bukkit.Bukkit.getWorld(name);
+        if (w == null) {
+            plugin.getLogger().warning("[RandomSpawn] main_world '" + name
+                    + "' not found — falling back to player's world.");
+            return player.getWorld();
+        }
+        return w;
+    }
+
     private void pollUntilAlive(Player player, Location target, int tick) {
         if (tick > plugin.cfg().getRespawnTimeoutTicks()) {
             debug("Poll timeout for " + player.getName() + " — giving up.");

@@ -15,5 +15,11 @@ randomspawn:
   # If false (default), only teleport on the very first login.
   spawn_on_every_login: false
 
+  # World where players are randomly spawned after death (and on first join).
+  # Defaults to "world" (the overworld).
+  # Players will be sent to this world regardless of which dimension they died in.
+  # Example: main_world: world_the_end  → always spawn in The End
+  main_world: world
+
   # Print debug messages to console (useful for troubleshooting)
   debug: false

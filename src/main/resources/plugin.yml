@@ -1,0 +1,22 @@
+name: randomspawn
+version: '0.1'
+description: Random spawn on first join and death, with AuthMe support Folia.
+main: org.rdsw.main
+api-version: '1.21'
+folia-supported: true
+load: POSTWORLD
+authors: [ mytai ]
+
+softdepend:
+  - AuthMe
+
+commands:
+  rdsw:
+    description: RandomSpawn admin commands
+    usage: /rdsw around <radius> | /rdsw reload
+    permission: randomspawn.admin
+
+permissions:
+  randomspawn.admin:
+    description: Access to all RandomSpawn admin commands
+    default: op

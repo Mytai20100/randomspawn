@@ -2,16 +2,16 @@ package org.rdsw;
 
 public class Config {
 
-    private static final int MIN_AROUND          = 1;
-    private static final int MAX_AROUND          = 30_000;
-    private static final int MIN_TIMEOUT_SECS    = 5;
-    private static final int MAX_TIMEOUT_SECS    = 300;
+    private static final int MIN_AROUND       = 1;
+    private static final int MAX_AROUND       = 30_000;
+    private static final int MIN_TIMEOUT_SECS = 5;
+    private static final int MAX_TIMEOUT_SECS = 300;
 
     private final main plugin;
     private volatile int     around;
     private volatile boolean enabled;
     private volatile boolean spawnOnEveryLogin;
-    private volatile int     respawnTimeoutTicks; // stored as ticks internally
+    private volatile int     respawnTimeoutTicks;
     private volatile boolean debug;
     private volatile String  mainWorld;
 
@@ -33,8 +33,8 @@ public class Config {
         mainWorld         = plugin.getConfig().getString("randomspawn.main_world", "world");
 
         int rawSecs = plugin.getConfig().getInt("randomspawn.respawn_timeout", 30);
-        int clampedSecs = Math.max(MIN_TIMEOUT_SECS, Math.min(rawSecs, MAX_TIMEOUT_SECS));
-        respawnTimeoutTicks = clampedSecs * 20; // convert seconds → ticks
+        int clamped = Math.max(MIN_TIMEOUT_SECS, Math.min(rawSecs, MAX_TIMEOUT_SECS));
+        respawnTimeoutTicks = clamped * 20;
     }
 
     public int     getAround()              { return around; }

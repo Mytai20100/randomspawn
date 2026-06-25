@@ -13,7 +13,7 @@ softdepend:
 commands:
   rdsw:
     description: RandomSpawn admin commands
-    usage: /rdsw around <radius> | /rdsw reload
+    usage: /rdsw around <radius> | /rdsw reload | /rdsw info
     permission: randomspawn.admin
 
 permissions:

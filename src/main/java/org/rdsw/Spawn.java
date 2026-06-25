@@ -80,12 +80,25 @@ public class Spawn {
                     && type != Material.MAGMA_BLOCK
                     && type != Material.POWDER_SNOW
                     && type != Material.CACTUS
-                    && world.getBlockAt(x, y + 1, z).isPassable()
-                    && world.getBlockAt(x, y + 2, z).isPassable()) {
+                    && isBreathable(world.getBlockAt(x, y + 1, z))
+                    && isBreathable(world.getBlockAt(x, y + 2, z))) {
                 return y;
             }
         }
         return -1;
+    }
+
+    // Passable is not enough — water/kelp/seagrass are all passable but unbreathable.
+    private boolean isBreathable(Block b) {
+        if (!b.isPassable()) return false;
+        Material t = b.getType();
+        return t != Material.WATER
+            && t != Material.LAVA
+            && t != Material.BUBBLE_COLUMN
+            && t != Material.KELP
+            && t != Material.KELP_PLANT
+            && t != Material.SEAGRASS
+            && t != Material.TALL_SEAGRASS;
     }
     private void debug(String msg) {
         if (plugin.cfg().isDebug()) {

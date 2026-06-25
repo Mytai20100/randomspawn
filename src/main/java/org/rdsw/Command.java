@@ -33,6 +33,18 @@ public class Command implements CommandExecutor, TabCompleter {
             return true;
         }
         switch (args[0].toLowerCase()) {
+            case "info" -> {
+                String ver = plugin.getDescription().getVersion();
+                sender.sendMessage("§8§m-----------------------------");
+                sender.sendMessage(" §bRandomSpawn §7v" + ver);
+                sender.sendMessage(" §7Author: §fmytai20100");
+                sender.sendMessage(" §7GitHub: §fhttps://github.com/mytai20100/randomspawn");
+                org.bukkit.plugin.Plugin authme = org.bukkit.Bukkit.getPluginManager().getPlugin("AuthMe");
+                if (authme != null) {
+                    sender.sendMessage(" §7AuthMe: §a" + authme.getDescription().getVersion());
+                }
+                sender.sendMessage("§8§m-----------------------------");
+            }
             case "reload" -> {
                 plugin.cfg().load();
                 sender.sendMessage("§aRDSW config reloaded.");
@@ -67,11 +79,11 @@ public class Command implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
         if (!sender.hasPermission("randomspawn.admin")) return Collections.emptyList();
-        if (args.length == 1) return Arrays.asList("around", "reload");
+        if (args.length == 1) return Arrays.asList("around", "reload", "info");
         if (args.length == 2 && args[0].equalsIgnoreCase("around")) return Arrays.asList("500", "1000", "1900");
         return Collections.emptyList();
     }
     private void sendUsage(CommandSender sender) {
-        sender.sendMessage("§eUsage: /rdsw around <radius> | /rdsw reload");
+        sender.sendMessage("§eUsage: /rdsw around <radius> | /rdsw reload | /rdsw info");
     }
 }

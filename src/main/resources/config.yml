@@ -1,25 +1,7 @@
-randomspawn:
-  # Enable or disable the plugin
+﻿randomspawn:
   enabled: true
-
-  # Random spawn radius (in blocks) around world origin (0, 0)
-  # Min: 1, Max: 30000
   around: 1000
-
-  # Timeout (in seconds) for waiting on player to click Respawn after death.
-  # If the player hasn't respawned within this time, the random spawn is cancelled.
-  # Min: 5, Max: 300
   respawn_timeout: 30
-
-  # [AuthMe only] If true, teleport to a random spot on EVERY login.
-  # If false (default), only teleport on the very first login.
   spawn_on_every_login: false
-
-  # World where players are randomly spawned after death (and on first join).
-  # Defaults to "world" (the overworld).
-  # Players will be sent to this world regardless of which dimension they died in.
-  # Example: main_world: world_the_end  → always spawn in The End
   main_world: world
-
-  # Print debug messages to console (useful for troubleshooting)
   debug: false

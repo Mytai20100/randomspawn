@@ -39,13 +39,27 @@ To run a local test server:
 | Permission | Description | Default |
 |---|---|---|
 | `randomspawn.admin` | Access to all `/rdsw` commands | OP |
+## Commands
 
 ---
 
-## Commands
 
 | Command | Description |
 |---|---|
 | `/rdsw around <radius>` | Teleport yourself to a random spot within the given radius |
 | `/rdsw reload` | Reload the config |
 | `/rdsw info` | Show plugin version, author, and AuthMe version (if installed) |
+
+---
+
+<details>
+<summary>config.yml</summary>
+
+```yaml
+randomspawn:
+  enabled: true
+  around: 1000
+  respawn_timeout: 30
+  spawn_on_every_login: false
+  main_world: world
+  debug: false

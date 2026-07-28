@@ -69,14 +69,30 @@ public class Spawn {
             return null;
         });
     }
+    // How many blocks below the world's "highest motion-blocking" surface we still
+    // accept as a valid spawn. Keeping this small stops the search from tunneling
+    // down into caves — a cave roof block is technically "solid" but may be dozens
+    // of blocks below daylight.
+    private static final int MAX_DEPTH_BELOW_SURFACE = 3;
+
     private int safeY(World world, int x, int z) {
-        int top = world.getHighestBlockYAt(x, z);
-        for (int y = top; y > world.getMinHeight(); y--) {
+        // MOTION_BLOCKING_NO_LEAVES ignores leaves but still counts water/ice as solid,
+        // so this gives us the real outdoor surface height (ground OR top of water/ocean).
+        int top = world.getHighestBlockYAt(x, z, org.bukkit.HeightMap.MOTION_BLOCKING_NO_LEAVES);
+
+        Material topType = world.getBlockAt(x, top - 1, z).getType();
+        if (isLiquid(topType)) {
+            // Surface here is open water (ocean/lake) — reject the whole column so we
+            // don't spawn the player on the seabed or floating over the sea.
+            return -1;
+        }
+
+        int minY = Math.max(world.getMinHeight(), top - MAX_DEPTH_BELOW_SURFACE);
+        for (int y = top; y >= minY; y--) {
             Block block = world.getBlockAt(x, y, z);
             Material type = block.getType();
             if (!block.isPassable()
-                    && type != Material.LAVA
-                    && type != Material.WATER
+                    && !isLiquid(type)
                     && type != Material.MAGMA_BLOCK
                     && type != Material.POWDER_SNOW
                     && type != Material.CACTUS
@@ -88,17 +104,21 @@ public class Spawn {
         return -1;
     }
 
+    private boolean isLiquid(Material type) {
+        return type == Material.WATER || type == Material.LAVA;
+    }
+
     // Passable is not enough — water/kelp/seagrass are all passable but unbreathable.
     private boolean isBreathable(Block b) {
         if (!b.isPassable()) return false;
         Material t = b.getType();
         return t != Material.WATER
-            && t != Material.LAVA
-            && t != Material.BUBBLE_COLUMN
-            && t != Material.KELP
-            && t != Material.KELP_PLANT
-            && t != Material.SEAGRASS
-            && t != Material.TALL_SEAGRASS;
+                && t != Material.LAVA
+                && t != Material.BUBBLE_COLUMN
+                && t != Material.KELP
+                && t != Material.KELP_PLANT
+                && t != Material.SEAGRASS
+                && t != Material.TALL_SEAGRASS;
     }
     private void debug(String msg) {
         if (plugin.cfg().isDebug()) {

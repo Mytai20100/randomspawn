@@ -7,9 +7,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Respawn implements Listener {
     private final main plugin;
+
+    // Players who died and still need a random location applied once
+    // Folia actually respawns them (we don't know yet if they have a bed).
+    private final Set<java.util.UUID> pending = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public Respawn(main plugin) {
         this.plugin = plugin;
@@ -18,12 +27,26 @@ public class Respawn implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDeath(PlayerDeathEvent event) {
         if (!plugin.cfg().isEnabled()) return;
-        if (event.getEntity().getBedSpawnLocation() != null) return;
 
-        Player player = event.getEntity();
+        // Don't touch getBedSpawnLocation()/getRespawnLocation() here — on Folia
+        // that can force a synchronous chunk load from the wrong region thread.
+        // Just flag the player; PlayerRespawnEvent tells us safely whether they
+        // have a real bed/anchor spawn once Folia resolves it.
+        pending.add(event.getEntity().getUniqueId());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        if (!pending.remove(player.getUniqueId())) return;
+        if (!plugin.cfg().isEnabled()) return;
+
+        // Folia has already safely determined this for us — no manual chunk access needed.
+        if (event.isBedSpawn() || event.isAnchorSpawn()) return;
+
         World world = getTargetWorld(player);
 
-        debug(player.getName() + " died in " + player.getWorld().getName()
+        debug(player.getName() + " respawning without bed/anchor spawn"
                 + " — searching random spawn in: " + world.getName());
 
         plugin.getSpawn().findSafeAsync(world, plugin.cfg().getAround())
